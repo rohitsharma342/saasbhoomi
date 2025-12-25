@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../models/startup.dart';
+import '../models/founder.dart';
 import '../services/data_service.dart';
 import '../services/chat_service.dart';
 import '../widgets/custom_button.dart';
@@ -311,7 +312,7 @@ class StartupDetailScreen extends StatelessWidget {
                             final founders = startup.founderIds
                                 .map((id) => dataService.getFounderById(id))
                                 .where((founder) => founder != null)
-                                .cast<dynamic>()
+                                .cast<Founder>()
                                 .toList();
                             
                             if (founders.isNotEmpty) {
