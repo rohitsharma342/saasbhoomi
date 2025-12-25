@@ -99,6 +99,14 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
     }
   }
 
+  void _skipRegistration() {
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => const DashboardScreen(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -114,6 +122,20 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           ),
           onPressed: () => Navigator.of(context).pop(),
         ),
+        actions: [
+          TextButton(
+            onPressed: _skipRegistration,
+            child: const Text(
+              'Skip',
+              style: TextStyle(
+                color: AppConstants.primaryColor,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+        ],
       ),
       body: SafeArea(
         child: Center(
