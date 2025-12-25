@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class AppConstants {
-  static const String appName = 'SaasBhoomi';
+  static const String appName = 'SaaSBoomi';
   static const String tagline = 'Made With BrainBox';
   static const String appDescription = 'Building world\'s largest community of SaaS & AI founders';
   
