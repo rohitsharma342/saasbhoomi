@@ -86,7 +86,7 @@ class _DashboardScreenState extends State<DashboardScreen>
     return Scaffold(
       backgroundColor: AppConstants.backgroundColor,
       appBar: AppBar(
-        title: const Text('SaasBhoomi'),
+        title: const Text('SaaSBoomi'),
         backgroundColor: AppConstants.surfaceColor,
         elevation: 1,
         actions: [
