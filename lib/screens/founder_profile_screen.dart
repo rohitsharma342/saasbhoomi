@@ -3,10 +3,12 @@ import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../models/founder.dart';
 import '../services/data_service.dart';
+import '../services/chat_service.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/startup_card.dart';
 import '../utils/constants.dart';
 import 'startup_detail_screen.dart';
+import 'chat_screen.dart';
 
 class FounderProfileScreen extends StatelessWidget {
   final Founder founder;
@@ -273,11 +275,22 @@ class FounderProfileScreen extends StatelessWidget {
                               text: 'Message',
                               isOutlined: true,
                               onPressed: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: Text('Messaging feature coming soon!'),
-                                  ),
-                                );
+                                final chatService = Provider.of<ChatService>(context, listen: false);
+                                
+                                chatService.startChatWithFounder(founder).then((chat) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ChatScreen(chat: chat),
+                                    ),
+                                  );
+                                }).catchError((error) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('Error starting chat: $error'),
+                                    ),
+                                  );
+                                });
                               },
                             ),
                           ),

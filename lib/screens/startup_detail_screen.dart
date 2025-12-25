@@ -3,9 +3,11 @@ import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../models/startup.dart';
 import '../services/data_service.dart';
+import '../services/chat_service.dart';
 import '../widgets/custom_button.dart';
 import '../utils/constants.dart';
 import 'founder_profile_screen.dart';
+import 'chat_screen.dart';
 
 class StartupDetailScreen extends StatelessWidget {
   final Startup startup;
@@ -302,11 +304,38 @@ class StartupDetailScreen extends StatelessWidget {
                         child: CustomButton(
                           text: 'Connect',
                           onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Connect feature coming soon!'),
-                              ),
-                            );
+                            final dataService = Provider.of<DataService>(context, listen: false);
+                            final chatService = Provider.of<ChatService>(context, listen: false);
+                            
+                            // Get founders for this startup
+                            final founders = startup.founderIds
+                                .map((id) => dataService.getFounderById(id))
+                                .where((founder) => founder != null)
+                                .cast<dynamic>()
+                                .toList();
+                            
+                            if (founders.isNotEmpty) {
+                              chatService.startChatWithStartup(startup, founders).then((chat) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ChatScreen(chat: chat),
+                                  ),
+                                );
+                              }).catchError((error) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Error starting chat: $error'),
+                                  ),
+                                );
+                              });
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('No founders available for this startup'),
+                                ),
+                              );
+                            }
                           },
                         ),
                       ),

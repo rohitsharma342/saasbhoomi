@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../services/data_service.dart';
 import '../services/auth_service.dart';
+import '../services/chat_service.dart';
 import '../widgets/startup_card.dart';
 import '../widgets/founder_card.dart';
 import '../utils/constants.dart';
 import 'startup_detail_screen.dart';
 import 'founder_profile_screen.dart';
 import 'notifications_screen.dart';
+import 'chat_list_screen.dart';
 import 'login_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
@@ -28,6 +30,11 @@ class _DashboardScreenState extends State<DashboardScreen>
     _tabController = TabController(length: 4, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<DataService>(context, listen: false).initialize();
+      final authService = Provider.of<AuthService>(context, listen: false);
+      if (authService.currentUser != null) {
+        Provider.of<ChatService>(context, listen: false)
+            .setCurrentUser(authService.currentUser!);
+      }
     });
   }
 
@@ -90,6 +97,50 @@ class _DashboardScreenState extends State<DashboardScreen>
         backgroundColor: AppConstants.surfaceColor,
         elevation: 1,
         actions: [
+          Consumer<ChatService>(
+            builder: (context, chatService, child) {
+              return Stack(
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.chat_bubble_outline),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ChatListScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  if (chatService.unreadChatsCount > 0)
+                    Positioned(
+                      right: 8,
+                      top: 8,
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: const BoxDecoration(
+                          color: AppConstants.errorColor,
+                          shape: BoxShape.circle,
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 16,
+                          minHeight: 16,
+                        ),
+                        child: Text(
+                          '${chatService.unreadChatsCount}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                ],
+              );
+            },
+          ),
           Consumer<DataService>(
             builder: (context, dataService, child) {
               return Stack(
